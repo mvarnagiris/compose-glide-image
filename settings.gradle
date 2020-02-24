@@ -1,2 +1,2 @@
 include ':compose-glide-image'
-rootProject.name = "compose-glide-image"
+rootProject.name = "composeglideimage"
