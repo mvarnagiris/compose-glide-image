@@ -1,4 +1,7 @@
-# GlideImage for Jetpack Compose
+# How to get
+```
+implementation 'com.github.mvarnagiris:compose-glide-image:{version}'
+```
 [![](https://jitpack.io/v/mvarnagiris/compose-glide-image.svg)](https://jitpack.io/#mvarnagiris/compose-glide-image)
 
 # How to use
