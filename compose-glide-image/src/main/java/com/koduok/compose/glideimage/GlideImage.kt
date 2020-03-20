@@ -8,17 +8,16 @@ import androidx.compose.Composable
 import androidx.compose.onCommit
 import androidx.compose.state
 import androidx.ui.core.ContextAmbient
-import androidx.ui.core.Draw
 import androidx.ui.core.WithConstraints
-import androidx.ui.foundation.SimpleImage
-import androidx.ui.graphics.Canvas
-import androidx.ui.graphics.Image
-import androidx.ui.graphics.ImageConfig
-import androidx.ui.graphics.NativeImage
+import androidx.ui.foundation.Canvas
+import androidx.ui.foundation.Image
+import androidx.ui.graphics.ImageAsset
+import androidx.ui.graphics.ImageAssetConfig
+import androidx.ui.graphics.NativeImageAsset
 import androidx.ui.graphics.colorspace.ColorSpace
 import androidx.ui.graphics.colorspace.ColorSpaces
+import androidx.ui.layout.LayoutSize
 import androidx.ui.unit.IntPx
-import androidx.ui.unit.PxSize
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.request.target.CustomTarget
@@ -30,8 +29,8 @@ fun GlideImage(
     model: Any,
     customize: RequestBuilder<Bitmap>.() -> RequestBuilder<Bitmap> = { this }
 ) {
-    WithConstraints { constraints ->
-        var image by state<Image?> { null }
+    WithConstraints { constraints, _ ->
+        var image by state<ImageAsset?> { null }
         var drawable by state<Drawable?> { null }
         val context = ContextAmbient.current
 
@@ -79,21 +78,21 @@ fun GlideImage(
         val theImage = image
         val theDrawable = drawable
         if (theImage != null) {
-            SimpleImage(image = theImage)
+            Image(image = theImage)
         } else if (theDrawable != null) {
-            Draw { canvas: Canvas, _: PxSize -> theDrawable.draw(canvas.nativeCanvas) }
+            Canvas(modifier = LayoutSize.Fill) { theDrawable.draw(nativeCanvas) }
         }
     }
 }
 
-class AndroidImage(private val bitmap: Bitmap) : Image {
+class AndroidImage(private val bitmap: Bitmap) : ImageAsset {
     override val width: Int
         get() = bitmap.width
 
     override val height: Int
         get() = bitmap.height
 
-    override val config: ImageConfig
+    override val config: ImageAssetConfig
         get() = bitmap.config.toImageConfig()
 
     override val colorSpace: ColorSpace
@@ -106,7 +105,7 @@ class AndroidImage(private val bitmap: Bitmap) : Image {
     override val hasAlpha: Boolean
         get() = bitmap.hasAlpha()
 
-    override val nativeImage: NativeImage
+    override val nativeImage: NativeImageAsset
         get() = bitmap
 
     override fun prepareToDraw() {
@@ -114,24 +113,24 @@ class AndroidImage(private val bitmap: Bitmap) : Image {
     }
 }
 
-internal fun Bitmap.Config.toImageConfig(): ImageConfig {
+internal fun Bitmap.Config.toImageConfig(): ImageAssetConfig {
     // Cannot utilize when statements with enums that may have different sets of supported
     // values between the compiled SDK and the platform version of the device.
     // As a workaround use if/else statements
     // See https://youtrack.jetbrains.com/issue/KT-30473 for details
     @Suppress("DEPRECATION")
     return if (this == Bitmap.Config.ALPHA_8) {
-        ImageConfig.Alpha8
+        ImageAssetConfig.Alpha8
     } else if (this == Bitmap.Config.RGB_565) {
-        ImageConfig.Rgb565
+        ImageAssetConfig.Rgb565
     } else if (this == Bitmap.Config.ARGB_4444) {
-        ImageConfig.Argb8888 // Always upgrade to Argb_8888
+        ImageAssetConfig.Argb8888 // Always upgrade to Argb_8888
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && this == Bitmap.Config.RGBA_F16) {
-        ImageConfig.F16
+        ImageAssetConfig.F16
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && this == Bitmap.Config.HARDWARE) {
-        ImageConfig.Gpu
+        ImageAssetConfig.Gpu
     } else {
-        ImageConfig.Argb8888
+        ImageAssetConfig.Argb8888
     }
 }
 
