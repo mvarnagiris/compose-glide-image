@@ -3,6 +3,7 @@ package com.koduok.compose.glideimage
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import androidx.compose.Composable
+import androidx.compose.FrameManager
 import androidx.compose.onPreCommit
 import androidx.compose.state
 import androidx.ui.core.ContextAmbient
@@ -46,8 +47,10 @@ fun GlideImage(
                     }
 
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        image.value = resource.asImageAsset()
-                        onImageReady?.invoke()
+                        FrameManager.framed {
+                            image.value = resource.asImageAsset()
+                            onImageReady?.invoke()
+                        }
                     }
                 }
 
