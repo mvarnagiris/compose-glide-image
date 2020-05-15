@@ -47,7 +47,7 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.compose:compose-runtime:$compose_version"
-    implementation "androidx.ui:ui-framework:$compose_version"
+    implementation "androidx.ui:ui-core:$compose_version"
     implementation "androidx.ui:ui-foundation:$compose_version"
     api 'com.github.bumptech.glide:glide:4.11.0'
 

@@ -1,2 +1,4 @@
+enableFeaturePreview("GRADLE_METADATA")
+
 include ':compose-glide-image'
 rootProject.name = "composeglideimage"
