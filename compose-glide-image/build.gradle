@@ -51,7 +51,7 @@ dependencies {
     implementation "androidx.ui:ui-foundation:$compose_version"
     api 'com.github.bumptech.glide:glide:4.11.0'
 
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$coroutines_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
 }
