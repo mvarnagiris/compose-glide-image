@@ -13,7 +13,7 @@ import androidx.ui.foundation.Canvas
 import androidx.ui.foundation.Image
 import androidx.ui.graphics.ImageAsset
 import androidx.ui.graphics.asImageAsset
-import androidx.ui.graphics.painter.drawCanvas
+import androidx.ui.graphics.drawscope.drawCanvas
 import androidx.ui.layout.fillMaxSize
 import androidx.ui.unit.IntPx
 import com.bumptech.glide.Glide
@@ -90,7 +90,7 @@ fun GlideImage(
             Image(asset = theImage)
         } else if (theDrawable != null) {
             Canvas(modifier = Modifier.fillMaxSize()) {
-                drawCanvas { canvas, pxSize -> theDrawable.draw(canvas.nativeCanvas) }
+                drawCanvas { canvas, _ -> theDrawable.draw(canvas.nativeCanvas) }
             }
         }
     }
