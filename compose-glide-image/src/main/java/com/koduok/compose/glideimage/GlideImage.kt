@@ -29,8 +29,8 @@ fun GlideImage(
     customize: RequestBuilder<Bitmap>.() -> RequestBuilder<Bitmap> = { this }
 ) {
     WithConstraints {
-        val image = state <ImageAsset?> { null }
-        val drawable = state<Drawable?> { null }
+        val image = stateFor <ImageAsset?> (null) { null }
+        val drawable = stateFor<Drawable?> (null) { null }
         val context = ContextAmbient.current
 
         onPreCommit(model) {
