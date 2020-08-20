@@ -2,20 +2,17 @@ package com.koduok.compose.glideimage
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import androidx.compose.Composable
-import androidx.compose.FrameManager
-import androidx.compose.onPreCommit
-import androidx.compose.state
-import androidx.ui.core.ContextAmbient
-import androidx.ui.core.Modifier
-import androidx.ui.core.WithConstraints
-import androidx.ui.foundation.Canvas
-import androidx.ui.foundation.Image
-import androidx.ui.graphics.ImageAsset
-import androidx.ui.graphics.asImageAsset
-import androidx.ui.graphics.drawscope.drawCanvas
-import androidx.ui.layout.fillMaxSize
-import androidx.ui.unit.IntPx
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.WithConstraints
+import androidx.compose.ui.graphics.ImageAsset
+import androidx.compose.ui.graphics.asImageAsset
+import androidx.compose.ui.graphics.drawscope.drawCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.platform.ContextAmbient
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.request.target.CustomTarget
@@ -32,8 +29,8 @@ fun GlideImage(
     customize: RequestBuilder<Bitmap>.() -> RequestBuilder<Bitmap> = { this }
 ) {
     WithConstraints {
-        val image = state<ImageAsset?> { null }
-        val drawable = state<Drawable?> { null }
+        val image = stateFor <ImageAsset?> (null) { null }
+        val drawable = stateFor<Drawable?> (null) { null }
         val context = ContextAmbient.current
 
         onPreCommit(model) {
@@ -47,23 +44,22 @@ fun GlideImage(
                     }
 
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        FrameManager.framed {
-                            image.value = resource.asImageAsset()
-                            onImageReady?.invoke()
-                        }
+                        FrameManager.ensureStarted()
+                        image.value = resource.asImageAsset()
+                        onImageReady?.invoke()
                     }
                 }
 
                 val width =
-                    if (constraints.maxWidth > IntPx.Zero && constraints.maxWidth < IntPx.Infinity) {
-                        constraints.maxWidth.value
+                    if (constraints.maxWidth > 0 && constraints.maxWidth < Int.MAX_VALUE) {
+                        constraints.maxWidth
                     } else {
                         SIZE_ORIGINAL
                     }
 
                 val height =
-                    if (constraints.maxHeight > IntPx.Zero && constraints.maxHeight < IntPx.Infinity) {
-                        constraints.maxHeight.value
+                    if (constraints.maxHeight > 0 && constraints.maxHeight < Int.MAX_VALUE) {
+                        constraints.maxHeight
                     } else {
                         SIZE_ORIGINAL
                     }
