@@ -29,6 +29,7 @@ android {
 
     kotlinOptions {
         jvmTarget = '1.8'
+        useIR = true
     }
 
     buildFeatures {
@@ -36,8 +37,8 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion "0.1.0-dev17"
-        kotlinCompilerVersion "1.4.0"
+        kotlinCompilerExtensionVersion "1.0.0-alpha02"
+        kotlinCompilerVersion "1.4.10"
     }
 }
 
@@ -49,7 +50,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
 }
 
 dependencies {
-    def compose_version = '0.1.0-dev17'
+    def compose_version = '1.0.0-alpha02'
     def coroutines_version = "1.3.9"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

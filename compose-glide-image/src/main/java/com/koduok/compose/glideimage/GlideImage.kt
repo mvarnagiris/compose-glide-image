@@ -5,7 +5,10 @@ import android.graphics.drawable.Drawable
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.FrameManager
+import androidx.compose.runtime.onCommit
+import androidx.compose.runtime.stateFor
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.WithConstraints
 import androidx.compose.ui.graphics.ImageAsset
@@ -33,7 +36,7 @@ fun GlideImage(
         val drawable = stateFor<Drawable?> (null) { null }
         val context = ContextAmbient.current
 
-        onPreCommit(model) {
+        onCommit(model) {
             val glide = Glide.with(context)
             var target: CustomTarget<Bitmap>? = null
             val job = CoroutineScope(Dispatchers.Main).launch {
