@@ -14,6 +14,7 @@ import androidx.compose.ui.WithConstraints
 import androidx.compose.ui.graphics.ImageAsset
 import androidx.compose.ui.graphics.asImageAsset
 import androidx.compose.ui.graphics.drawscope.drawCanvas
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.ContextAmbient
 import com.bumptech.glide.Glide
@@ -89,7 +90,7 @@ fun GlideImage(
             Image(asset = theImage)
         } else if (theDrawable != null) {
             Canvas(modifier = Modifier.fillMaxSize()) {
-                drawCanvas { canvas, _ -> theDrawable.draw(canvas.nativeCanvas) }
+                drawIntoCanvas { theDrawable.draw(it.nativeCanvas) }
             }
         }
     }
