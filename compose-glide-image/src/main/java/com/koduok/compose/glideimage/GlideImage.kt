@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun GlideImage(
     model: Any,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Fit,
     alignment: Alignment = Alignment.Center,
     alpha: Float = DefaultAlpha,
