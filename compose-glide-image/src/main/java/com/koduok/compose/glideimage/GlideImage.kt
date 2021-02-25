@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -11,8 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.WithConstraints
-import androidx.compose.ui.platform.ContextAmbient
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun GlideImage(
-    model: Any,
+    url: String,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Fit,
     alignment: Alignment = Alignment.Center,
@@ -34,12 +34,12 @@ fun GlideImage(
     onImageReady: (() -> Unit)? = null,
     customize: RequestBuilder<Bitmap>.() -> RequestBuilder<Bitmap> = { this },
 ) {
-    WithConstraints {
-        var image by remember { mutableStateOf<ImageAsset?>(null) }
+    BoxWithConstraints {
+        var image by remember { mutableStateOf<ImageBitmap?>(null) }
         var drawable by remember { mutableStateOf<Drawable?>(null) }
-        val context = ContextAmbient.current
+        val context = LocalContext.current
 
-        onCommit(model) {
+        DisposableEffect(key1 = url, effect = {
             val glide = Glide.with(context)
             var target: CustomTarget<Bitmap>? = null
             val job = CoroutineScope(Dispatchers.Main).launch {
@@ -53,8 +53,7 @@ fun GlideImage(
                         resource: Bitmap,
                         transition: Transition<in Bitmap>?,
                     ) {
-                        FrameManager.ensureStarted()
-                        image = resource.asImageAsset()
+                        image = resource.asImageBitmap()
                         onImageReady?.invoke()
                     }
                 }
@@ -68,7 +67,7 @@ fun GlideImage(
 
                 glide
                     .asBitmap()
-                    .load(model)
+                    .load(url)
                     .override(size.width, size.height)
                     .let(customize)
                     .into(target!!)
@@ -80,7 +79,7 @@ fun GlideImage(
                 glide.clear(target)
                 job.cancel()
             }
-        }
+        })
 
         ActiveImage(
             image = image,
@@ -96,9 +95,10 @@ fun GlideImage(
 
 @Composable
 private fun ActiveImage(
-    image: ImageAsset?,
+    image: ImageBitmap?,
     drawable: Drawable?,
     modifier: Modifier = Modifier,
+    contentDescription: String? = null,
     contentScale: ContentScale = ContentScale.Fit,
     alignment: Alignment = Alignment.Center,
     alpha: Float = DefaultAlpha,
@@ -106,7 +106,8 @@ private fun ActiveImage(
 ) {
     if (image != null) {
         Image(
-            asset = image,
+            bitmap = image,
+            contentDescription = contentDescription,
             modifier = modifier,
             contentScale = contentScale,
             alignment = alignment,
